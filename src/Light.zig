@@ -32,7 +32,7 @@ pub const Light = struct {
     intensityLoc: c_int,
 
     pub fn init(lightType: c_int, position: rl.Vector3, target: rl.Vector3, color: rl.Color, intensity: f32, shader: rl.Shader) !Self {
-        const light = Light{
+        var light = Light{
             .enabled = true,
             .type = lightType,
             .position = position,
@@ -52,7 +52,8 @@ pub const Light = struct {
             .intensityLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].intensity", lightCount)),
         };
 
-        Update(shader, light);
+        // UpdateLight(shader, light);
+        light.Update(shader);
         lightCount += 1;
 
         // try std.io.getStdOut().writer().print("{} | ", .{@TypeOf(Self)});
@@ -61,7 +62,7 @@ pub const Light = struct {
         return light;
     }
 
-    pub fn Update(shader: rl.Shader, self: Self) void {
+    pub fn UpdateLight(shader: rl.Shader, self: Self) void {
         rl.SetShaderValue(shader, self.enabledLoc, &self.enabled, rl.SHADER_UNIFORM_INT);
         rl.SetShaderValue(shader, self.typeLoc, &self.type, rl.SHADER_UNIFORM_INT);
 
@@ -72,6 +73,10 @@ pub const Light = struct {
         rl.SetShaderValue(shader, self.targetLoc, &target, rl.SHADER_UNIFORM_VEC3);
         rl.SetShaderValue(shader, self.colorLoc, &self.color, rl.SHADER_UNIFORM_VEC4);
         rl.SetShaderValue(shader, self.intensityLoc, &self.intensity, rl.SHADER_UNIFORM_FLOAT);
+    }
+
+    pub fn Update(self: *Self, shader: rl.Shader) void {
+        UpdateLight(shader, self.*);
     }
 
     pub fn Toggle(self: *Self) void {

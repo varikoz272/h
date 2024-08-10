@@ -1,34 +1,10 @@
 const rl = @import("raylib.zig");
 const std = @import("std");
+const light = @import("Light.zig");
 
 const GLSL_VERSION: c_int = 330;
 const screenWidth: c_int = 1920;
 const screenHeight: c_int = 1080;
-
-const LightType = enum(c_int) {
-    LIGHT_DIRECTIONAL = 0,
-    LIGHT_POINT = 1,
-    LIGHT_SPOT = 2,
-};
-
-const Light = struct {
-    type: c_int,
-    enabled: bool,
-    position: rl.Vector3,
-    target: rl.Vector3,
-    color: [4]f32,
-    intensity: f32,
-
-    typeLoc: c_int,
-    enabledLoc: c_int,
-    positionLoc: c_int,
-    targetLoc: c_int,
-    colorLoc: c_int,
-    intensityLoc: c_int,
-};
-
-var lightCount: c_int = 0;
-pub const MAX_LIGHTS: c_int = 4;
 
 pub fn main() !void {
     rl.SetConfigFlags(rl.FLAG_MSAA_4X_HINT);
@@ -51,17 +27,18 @@ pub fn main() !void {
     shader.locs[rl.SHADER_LOC_VECTOR_VIEW] = rl.GetShaderLocation(shader, "viewPos");
 
     const lightCountLoc = rl.GetShaderLocation(shader, "numOfLights");
-    var maxLightCount = MAX_LIGHTS;
+    var maxLightCount = light.MAX_LIGHTS;
 
     rl.SetShaderValue(shader, lightCountLoc, &maxLightCount, rl.SHADER_UNIFORM_INT);
 
-    var ambientIntensity: f32 = 0.02;
+    const ambientIntensity: f32 = 0.02;
     const ambientColor = rl.Color{ .r = 26, .g = 32, .b = 135, .a = 255 };
-    var ambientColorNormalized = rl.Vector3{
+    const ambientColorNormalized = rl.Vector3{
         .x = @as(f32, @floatFromInt(ambientColor.r)) / 255.0,
         .y = @as(f32, @floatFromInt(ambientColor.g)) / 255.0,
         .z = @as(f32, @floatFromInt(ambientColor.b)) / 255.0,
     };
+
     rl.SetShaderValue(shader, rl.GetShaderLocation(shader, "ambientColor"), &ambientColorNormalized, rl.SHADER_UNIFORM_VEC3);
     rl.SetShaderValue(shader, rl.GetShaderLocation(shader, "ambient"), &ambientIntensity, rl.SHADER_UNIFORM_FLOAT);
 
@@ -100,11 +77,12 @@ pub fn main() !void {
     var carTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
     var floorTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
 
-    var lights = [MAX_LIGHTS]Light{
-        CreateLight(@intFromEnum(LightType.LIGHT_POINT), rl.Vector3{ .x = -1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.YELLOW, 4.0, shader),
-        CreateLight(@intFromEnum(LightType.LIGHT_POINT), rl.Vector3{ .x = 2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.RED, 3.3, shader),
-        CreateLight(@intFromEnum(LightType.LIGHT_POINT), rl.Vector3{ .x = -2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.GREEN, 8.3, shader),
-        CreateLight(@intFromEnum(LightType.LIGHT_POINT), rl.Vector3{ .x = 1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.BLUE, 2.0, shader),
+    var lights = [light.MAX_LIGHTS]light.Light{
+        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = -1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.YELLOW, 4.0, shader),
+        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = 2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.RED, 3.3, shader),
+        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = -2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.GREEN, 8.3, shader),
+        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = 1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.BLUE, 2.0, shader),
+        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = 1.0, .y = 1.0, .z = 2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.PINK, 5.0, shader),
     };
 
     var usage: c_int = 1;
@@ -139,8 +117,9 @@ pub fn main() !void {
             lights[0].enabled = !lights[0].enabled;
         }
 
-        for (0..MAX_LIGHTS) |i| {
-            UpdateLight(shader, lights[i]);
+        for (0..light.MAX_LIGHTS) |i| {
+            // light.Light.UpdateLight(shader, lights[i]);
+            lights[i].Update(shader);
         }
 
         rl.BeginDrawing();
@@ -163,7 +142,7 @@ pub fn main() !void {
 
         rl.DrawModel(car, rl.Vector3Zero(), 0.25, rl.WHITE);
 
-        for (0..MAX_LIGHTS) |i| {
+        for (0..light.MAX_LIGHTS) |i| {
             const lightColor = rl.Color{ .r = @as(u8, @intFromFloat(lights[i].color[0] * 255)), .g = @as(u8, @intFromFloat(lights[i].color[1] * 255)), .b = @as(u8, @intFromFloat(lights[i].color[2] * 255)), .a = @as(u8, @intFromFloat(lights[i].color[3] * 255)) };
 
             if (lights[i].enabled) {
@@ -191,46 +170,4 @@ pub fn main() !void {
     rl.UnloadShader(shader);
 
     rl.CloseWindow();
-}
-
-fn CreateLight(lightType: c_int, position: rl.Vector3, target: rl.Vector3, color: rl.Color, intensity: f32, shader: rl.Shader) Light {
-    // if (lightCount >= MAX_LIGHTS) return null;
-
-    const light = Light{
-        .enabled = true,
-        .type = lightType,
-        .position = position,
-        .target = target,
-        .color = [4]f32{
-            @as(f32, @floatFromInt(color.r)) / 255.0,
-            @as(f32, @floatFromInt(color.g)) / 255.0,
-            @as(f32, @floatFromInt(color.b)) / 255.0,
-            @as(f32, @floatFromInt(color.a)) / 255.0,
-        },
-        .intensity = intensity,
-        .enabledLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].enabled", lightCount)),
-        .typeLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].type", lightCount)),
-        .positionLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].position", lightCount)),
-        .targetLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].target", lightCount)),
-        .colorLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].color", lightCount)),
-        .intensityLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].intensity", lightCount)),
-    };
-
-    UpdateLight(shader, light);
-    lightCount += 1;
-
-    return light;
-}
-
-fn UpdateLight(shader: rl.Shader, light: Light) void {
-    rl.SetShaderValue(shader, light.enabledLoc, &light.enabled, rl.SHADER_UNIFORM_INT);
-    rl.SetShaderValue(shader, light.typeLoc, &light.type, rl.SHADER_UNIFORM_INT);
-
-    const position = [3]f32{ light.position.x, light.position.y, light.position.z };
-    rl.SetShaderValue(shader, light.positionLoc, &position, rl.SHADER_UNIFORM_VEC3);
-
-    const target = [3]f32{ light.target.x, light.target.y, light.target.z };
-    rl.SetShaderValue(shader, light.targetLoc, &target, rl.SHADER_UNIFORM_VEC3);
-    rl.SetShaderValue(shader, light.colorLoc, &light.color, rl.SHADER_UNIFORM_VEC4);
-    rl.SetShaderValue(shader, light.intensityLoc, &light.intensity, rl.SHADER_UNIFORM_FLOAT);
 }
