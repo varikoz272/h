@@ -54,7 +54,7 @@ pub const ModelTextures = struct {
 
 pub fn RaylibModel(fileName: [*c]const u8, values: ?ModelValues, textures: ?ModelTextures, shader: ?rl.Shader) rl.Model {
     const model = rl.LoadModel(fileName);
-    model.materials[0].shader = shader orelse .{};
+    model.materials[0].shader = shader orelse model.materials[0].shader;
 
     applyValues(model, values orelse ModelValues.allnull());
     applyTextures(model, textures orelse ModelTextures.allnull());

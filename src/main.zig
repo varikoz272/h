@@ -47,20 +47,6 @@ pub fn main() !void {
     const emissiveColorLoc = rl.GetShaderLocation(shader, "emissiveColor");
     const textureTilingLoc = rl.GetShaderLocation(shader, "tiling");
 
-    // var car = rl.LoadModel("./resources/models/old_car_new.glb");
-    // car.materials[0].shader = shader;
-    // car.materials[0].maps[rl.MATERIAL_MAP_ALBEDO].color = rl.WHITE;
-    // car.materials[0].maps[rl.MATERIAL_MAP_METALNESS].value = 0.0;
-    // car.materials[0].maps[rl.MATERIAL_MAP_ROUGHNESS].value = 0.0;
-    // car.materials[0].maps[rl.MATERIAL_MAP_OCCLUSION].value = 1.0;
-    // car.materials[0].maps[rl.MATERIAL_MAP_EMISSION].color = rl.Color{ .r = 255, .g = 162, .b = 0, .a = 255 };
-    //
-    // car.materials[0].maps[rl.MATERIAL_MAP_ALBEDO].texture = rl.LoadTexture("./resources/old_car_d.png");
-    // car.materials[0].maps[rl.MATERIAL_MAP_METALNESS].texture = rl.LoadTexture("./resources/old_car_mra.png");
-    //
-    // car.materials[0].maps[rl.MATERIAL_MAP_NORMAL].texture = rl.LoadTexture("./resources/old_car_n.png");
-    // car.materials[0].maps[rl.MATERIAL_MAP_EMISSION].texture = rl.LoadTexture("./resources/old_car_e.png");
-
     var car = model.RaylibModel(
         "./resources/models/old_car_new.glb",
         null,
@@ -88,6 +74,20 @@ pub fn main() !void {
     floor.materials[0].maps[rl.MATERIAL_MAP_ALBEDO].texture = rl.LoadTexture("./resources/road_a.png");
     floor.materials[0].maps[rl.MATERIAL_MAP_METALNESS].texture = rl.LoadTexture("./resources/road_mra.png");
     floor.materials[0].maps[rl.MATERIAL_MAP_NORMAL].texture = rl.LoadTexture("./resources/road_n.png");
+
+    // var floor = model.RaylibModel(
+    //     "./resources/models/plane.glb",
+    //     null,
+    //     model.ModelTextures.prepare(
+    //         "./resources/road_a.png",
+    //         "./resources/road_mra.png",
+    //         null,
+    //         null,
+    //         null,
+    //         "./resources/road_n.png",
+    //     ),
+    //     shader,
+    // );
 
     var carTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
     var floorTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
