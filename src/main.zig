@@ -61,20 +61,6 @@ pub fn main() !void {
         shader,
     );
 
-    // var floor = rl.LoadModel("./resources/models/plane.glb");
-    //
-    // floor.materials[0].shader = shader;
-    //
-    // floor.materials[0].maps[rl.MATERIAL_MAP_ALBEDO].color = rl.WHITE;
-    // floor.materials[0].maps[rl.MATERIAL_MAP_METALNESS].value = 0.0;
-    // floor.materials[0].maps[rl.MATERIAL_MAP_ROUGHNESS].value = 0.0;
-    // floor.materials[0].maps[rl.MATERIAL_MAP_OCCLUSION].value = 1.0;
-    // floor.materials[0].maps[rl.MATERIAL_MAP_EMISSION].color = rl.BLACK;
-    //
-    // floor.materials[0].maps[rl.MATERIAL_MAP_ALBEDO].texture = rl.LoadTexture("./resources/road_a.png");
-    // floor.materials[0].maps[rl.MATERIAL_MAP_METALNESS].texture = rl.LoadTexture("./resources/road_mra.png");
-    // floor.materials[0].maps[rl.MATERIAL_MAP_NORMAL].texture = rl.LoadTexture("./resources/road_n.png");
-
     var floor = model.RaylibModel(
         "./resources/models/plane.glb",
         null,
@@ -114,22 +100,6 @@ pub fn main() !void {
 
         const cameraPos = [3]f32{ camera.position.x, camera.position.y, camera.position.z };
         rl.SetShaderValue(shader, shader.locs[rl.SHADER_LOC_VECTOR_VIEW], &cameraPos, rl.SHADER_UNIFORM_VEC3);
-
-        // if (rl.IsKeyPressed(rl.KEY_ONE)) {
-        //     lights[2].Toggle();
-        // }
-        //
-        // if (rl.IsKeyPressed(rl.KEY_TWO)) {
-        //     lights[1].Toggle();
-        // }
-        //
-        // if (rl.IsKeyPressed(rl.KEY_THREE)) {
-        //     lights[3].Toggle();
-        // }
-        //
-        // if (rl.IsKeyPressed(rl.KEY_FOUR)) {
-        //     lights[0].Toggle();
-        // }
 
         light.updateLights(&lights, shader);
 
