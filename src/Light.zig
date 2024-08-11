@@ -39,7 +39,15 @@ pub const Light = struct {
 
     toggleKey: ?c_int,
 
-    pub fn init(lightType: LightType, position: rl.Vector3, target: rl.Vector3, color: rl.Color, intensity: f32, shader: rl.Shader, toggleKey: ?c_int) Self {
+    pub fn initToggling(position: rl.Vector3, color: rl.Color, shader: rl.Shader, toggleKey: ?c_int) Self {
+        return initFull(LightType.LIGHT_POINT, position, rl.Vector3Zero(), color, 5.0, shader, toggleKey);
+    }
+
+    pub fn init(position: rl.Vector3, color: rl.Color, shader: rl.Shader) Self {
+        return initFull(LightType.LIGHT_POINT, position, rl.Vector3Zero(), color, 5.0, shader, null);
+    }
+
+    pub fn initFull(lightType: LightType, position: rl.Vector3, target: rl.Vector3, color: rl.Color, intensity: f32, shader: rl.Shader, toggleKey: ?c_int) Self {
         var light = Light{
             .enabled = true,
             .type = lightType,
@@ -74,7 +82,6 @@ pub const Light = struct {
 
         const position = [3]f32{ self.position.x, self.position.y, self.position.z };
         rl.SetShaderValue(shader, self.positionLoc, &position, rl.SHADER_UNIFORM_VEC3);
-
         const target = [3]f32{ self.target.x, self.target.y, self.target.z };
         rl.SetShaderValue(shader, self.targetLoc, &target, rl.SHADER_UNIFORM_VEC3);
         rl.SetShaderValue(shader, self.colorLoc, &self.color, rl.SHADER_UNIFORM_VEC4);

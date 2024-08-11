@@ -78,11 +78,10 @@ pub fn main() !void {
     var floorTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
 
     var lights = [light.MAX_LIGHTS]light.Light{
-        light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = -1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.YELLOW, 4.0, shader, null),
-        light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = 2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.RED, 3.3, shader, rl.KEY_TWO),
-        light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = -2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.GREEN, 8.3, shader, rl.KEY_THREE),
-        light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = 1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.BLUE, 2.0, shader, rl.KEY_FOUR),
-        // try light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = 1.0, .y = 1.0, .z = 2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.PINK, 5.0, shader),
+        light.Light.initToggling(rl.Vector3{ .x = -1.0, .y = 1.0, .z = -2.0 }, rl.YELLOW, shader, rl.KEY_ONE),
+        light.Light.initToggling(rl.Vector3{ .x = -1.0, .y = 1.0, .z = 2.0 }, rl.BLUE, shader, rl.KEY_TWO),
+        light.Light.initToggling(rl.Vector3{ .x = 1.0, .y = 1.0, .z = -2.0 }, rl.RED, shader, rl.KEY_THREE),
+        light.Light.initToggling(rl.Vector3{ .x = 1.0, .y = 1.0, .z = 2.0 }, rl.GREEN, shader, rl.KEY_FOUR),
     };
 
     var usage: c_int = 1;
