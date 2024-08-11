@@ -2,7 +2,7 @@ const rl = @import("raylib.zig");
 const std = @import("std");
 
 pub var lightCount: c_int = 0;
-pub const MAX_LIGHTS: c_int = 5;
+pub const MAX_LIGHTS: c_int = 4;
 
 pub const LightType = enum(c_int) {
     LIGHT_DIRECTIONAL = 0,
@@ -14,10 +14,16 @@ pub const LightType = enum(c_int) {
     }
 };
 
+pub fn updateLights(lights: []Light, shader: rl.Shader) void {
+    for (lights) |*item| {
+        item.Update(shader);
+    }
+}
+
 pub const Light = struct {
     const Self = Light;
 
-    type: c_int,
+    type: LightType,
     enabled: bool,
     position: rl.Vector3,
     target: rl.Vector3,
@@ -31,7 +37,9 @@ pub const Light = struct {
     colorLoc: c_int,
     intensityLoc: c_int,
 
-    pub fn init(lightType: c_int, position: rl.Vector3, target: rl.Vector3, color: rl.Color, intensity: f32, shader: rl.Shader) !Self {
+    toggleKey: ?c_int,
+
+    pub fn init(lightType: LightType, position: rl.Vector3, target: rl.Vector3, color: rl.Color, intensity: f32, shader: rl.Shader, toggleKey: ?c_int) Self {
         var light = Light{
             .enabled = true,
             .type = lightType,
@@ -50,19 +58,17 @@ pub const Light = struct {
             .targetLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].target", lightCount)),
             .colorLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].color", lightCount)),
             .intensityLoc = rl.GetShaderLocation(shader, rl.TextFormat("lights[%i].intensity", lightCount)),
+
+            .toggleKey = toggleKey,
         };
 
-        // UpdateLight(shader, light);
         light.Update(shader);
         lightCount += 1;
-
-        // try std.io.getStdOut().writer().print("{} | ", .{@TypeOf(Self)});
-        // try std.io.getStdOut().writer().print("{}\n\n", .{@TypeOf(light)});
 
         return light;
     }
 
-    pub fn UpdateLight(shader: rl.Shader, self: Self) void {
+    pub fn Update(self: *Self, shader: rl.Shader) void {
         rl.SetShaderValue(shader, self.enabledLoc, &self.enabled, rl.SHADER_UNIFORM_INT);
         rl.SetShaderValue(shader, self.typeLoc, &self.type, rl.SHADER_UNIFORM_INT);
 
@@ -73,10 +79,12 @@ pub const Light = struct {
         rl.SetShaderValue(shader, self.targetLoc, &target, rl.SHADER_UNIFORM_VEC3);
         rl.SetShaderValue(shader, self.colorLoc, &self.color, rl.SHADER_UNIFORM_VEC4);
         rl.SetShaderValue(shader, self.intensityLoc, &self.intensity, rl.SHADER_UNIFORM_FLOAT);
+
+        self.CheckForToggle();
     }
 
-    pub fn Update(self: *Self, shader: rl.Shader) void {
-        UpdateLight(shader, self.*);
+    fn CheckForToggle(self: *Self) void {
+        if (rl.IsKeyPressed(self.toggleKey orelse return)) self.Toggle();
     }
 
     pub fn Toggle(self: *Self) void {

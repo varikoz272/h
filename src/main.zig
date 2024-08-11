@@ -78,11 +78,11 @@ pub fn main() !void {
     var floorTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
 
     var lights = [light.MAX_LIGHTS]light.Light{
-        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = -1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.YELLOW, 4.0, shader),
-        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = 2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.RED, 3.3, shader),
-        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = -2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.GREEN, 8.3, shader),
-        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = 1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.BLUE, 2.0, shader),
-        try light.Light.init(light.LightType.LIGHT_POINT.value(), rl.Vector3{ .x = 1.0, .y = 1.0, .z = 2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.PINK, 5.0, shader),
+        light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = -1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.YELLOW, 4.0, shader, null),
+        light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = 2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.RED, 3.3, shader, rl.KEY_TWO),
+        light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = -2.0, .y = 1.0, .z = 1.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.GREEN, 8.3, shader, rl.KEY_THREE),
+        light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = 1.0, .y = 1.0, .z = -2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.BLUE, 2.0, shader, rl.KEY_FOUR),
+        // try light.Light.init(light.LightType.LIGHT_POINT, rl.Vector3{ .x = 1.0, .y = 1.0, .z = 2.0 }, rl.Vector3{ .x = 0.0, .y = 0.0, .z = 0.0 }, rl.PINK, 5.0, shader),
     };
 
     var usage: c_int = 1;
@@ -101,26 +101,23 @@ pub fn main() !void {
         const cameraPos = [3]f32{ camera.position.x, camera.position.y, camera.position.z };
         rl.SetShaderValue(shader, shader.locs[rl.SHADER_LOC_VECTOR_VIEW], &cameraPos, rl.SHADER_UNIFORM_VEC3);
 
-        if (rl.IsKeyPressed(rl.KEY_ONE)) {
-            lights[2].enabled = !lights[2].enabled;
-        }
+        // if (rl.IsKeyPressed(rl.KEY_ONE)) {
+        //     lights[2].Toggle();
+        // }
+        //
+        // if (rl.IsKeyPressed(rl.KEY_TWO)) {
+        //     lights[1].Toggle();
+        // }
+        //
+        // if (rl.IsKeyPressed(rl.KEY_THREE)) {
+        //     lights[3].Toggle();
+        // }
+        //
+        // if (rl.IsKeyPressed(rl.KEY_FOUR)) {
+        //     lights[0].Toggle();
+        // }
 
-        if (rl.IsKeyPressed(rl.KEY_TWO)) {
-            lights[1].enabled = !lights[1].enabled;
-        }
-
-        if (rl.IsKeyPressed(rl.KEY_THREE)) {
-            lights[3].enabled = !lights[3].enabled;
-        }
-
-        if (rl.IsKeyPressed(rl.KEY_FOUR)) {
-            lights[0].enabled = !lights[0].enabled;
-        }
-
-        for (0..light.MAX_LIGHTS) |i| {
-            // light.Light.UpdateLight(shader, lights[i]);
-            lights[i].Update(shader);
-        }
+        light.updateLights(&lights, shader);
 
         rl.BeginDrawing();
 
