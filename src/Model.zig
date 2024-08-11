@@ -12,12 +12,12 @@ pub const ModelValues = struct {
 
     pub fn prepare(albedo: ?f32, metalness: ?f32, roughness: ?f32, occlusion: ?f32, emission: ?f32, normal: ?f32) Self {
         return Self{
-            .albedo = albedo orelse 1.0,
+            .albedo = albedo orelse 0.0,
             .metalness = metalness orelse 0.0,
             .roughness = roughness orelse 0.0,
             .occlusion = occlusion orelse 1.0,
-            .emission = emission orelse 1.0,
-            .normal = normal orelse 1.0,
+            .emission = emission orelse 0.0,
+            .normal = normal orelse 0.0,
         };
     }
 

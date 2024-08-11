@@ -61,33 +61,33 @@ pub fn main() !void {
         shader,
     );
 
-    var floor = rl.LoadModel("./resources/models/plane.glb");
+    // var floor = rl.LoadModel("./resources/models/plane.glb");
+    //
+    // floor.materials[0].shader = shader;
+    //
+    // floor.materials[0].maps[rl.MATERIAL_MAP_ALBEDO].color = rl.WHITE;
+    // floor.materials[0].maps[rl.MATERIAL_MAP_METALNESS].value = 0.0;
+    // floor.materials[0].maps[rl.MATERIAL_MAP_ROUGHNESS].value = 0.0;
+    // floor.materials[0].maps[rl.MATERIAL_MAP_OCCLUSION].value = 1.0;
+    // floor.materials[0].maps[rl.MATERIAL_MAP_EMISSION].color = rl.BLACK;
+    //
+    // floor.materials[0].maps[rl.MATERIAL_MAP_ALBEDO].texture = rl.LoadTexture("./resources/road_a.png");
+    // floor.materials[0].maps[rl.MATERIAL_MAP_METALNESS].texture = rl.LoadTexture("./resources/road_mra.png");
+    // floor.materials[0].maps[rl.MATERIAL_MAP_NORMAL].texture = rl.LoadTexture("./resources/road_n.png");
 
-    floor.materials[0].shader = shader;
-
-    floor.materials[0].maps[rl.MATERIAL_MAP_ALBEDO].color = rl.WHITE;
-    floor.materials[0].maps[rl.MATERIAL_MAP_METALNESS].value = 0.0;
-    floor.materials[0].maps[rl.MATERIAL_MAP_ROUGHNESS].value = 0.0;
-    floor.materials[0].maps[rl.MATERIAL_MAP_OCCLUSION].value = 1.0;
-    floor.materials[0].maps[rl.MATERIAL_MAP_EMISSION].color = rl.BLACK;
-
-    floor.materials[0].maps[rl.MATERIAL_MAP_ALBEDO].texture = rl.LoadTexture("./resources/road_a.png");
-    floor.materials[0].maps[rl.MATERIAL_MAP_METALNESS].texture = rl.LoadTexture("./resources/road_mra.png");
-    floor.materials[0].maps[rl.MATERIAL_MAP_NORMAL].texture = rl.LoadTexture("./resources/road_n.png");
-
-    // var floor = model.RaylibModel(
-    //     "./resources/models/plane.glb",
-    //     null,
-    //     model.ModelTextures.prepare(
-    //         "./resources/road_a.png",
-    //         "./resources/road_mra.png",
-    //         null,
-    //         null,
-    //         null,
-    //         "./resources/road_n.png",
-    //     ),
-    //     shader,
-    // );
+    var floor = model.RaylibModel(
+        "./resources/models/plane.glb",
+        null,
+        model.ModelTextures.prepare(
+            "./resources/road_a.png",
+            "./resources/road_mra.png",
+            null,
+            null,
+            null,
+            "./resources/road_n.png",
+        ),
+        shader,
+    );
 
     var carTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
     var floorTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
