@@ -47,6 +47,22 @@ pub fn main() !void {
     const emissiveColorLoc = rl.GetShaderLocation(shader, "emissiveColor");
     const textureTilingLoc = rl.GetShaderLocation(shader, "tiling");
 
+    //ISSUE HERE
+    // var car = model.RaylibModel(
+    //     "./resources/models/cube.glb",
+    //     null,
+    //     model.ModelTextures.prepare(
+    //         "./resources/albedo.png",
+    //         "./resources/metalness.png",
+    //         "./resources/roughness.png",
+    //         null,
+    //         null,
+    //         "./resources/normal.png",
+    //     ),
+    //     shader,
+    // );
+
+    //BUT NO ISSUES HERE
     var car = model.RaylibModel(
         "./resources/models/old_car_new.glb",
         null,
@@ -96,7 +112,7 @@ pub fn main() !void {
     rl.DisableCursor();
 
     while (!rl.WindowShouldClose()) {
-        rl.UpdateCamera(&camera, rl.CAMERA_FIRST_PERSON);
+        rl.UpdateCamera(&camera, rl.CAMERA_FREE);
 
         const cameraPos = [3]f32{ camera.position.x, camera.position.y, camera.position.z };
         rl.SetShaderValue(shader, shader.locs[rl.SHADER_LOC_VECTOR_VIEW], &cameraPos, rl.SHADER_UNIFORM_VEC3);
