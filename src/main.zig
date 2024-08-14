@@ -48,34 +48,34 @@ pub fn main() !void {
     const textureTilingLoc = rl.GetShaderLocation(shader, "tiling");
 
     //ISSUE HERE
-    // var car = model.RaylibModel(
-    //     "./resources/models/cube.glb",
-    //     null,
-    //     model.ModelTextures.prepare(
-    //         "./resources/albedo.png",
-    //         "./resources/metalness.png",
-    //         "./resources/roughness.png",
-    //         null,
-    //         null,
-    //         "./resources/normal.png",
-    //     ),
-    //     shader,
-    // );
-
-    //BUT NO ISSUES HERE
     var car = model.RaylibModel(
-        "./resources/models/old_car_new.glb",
+        "./resources/models/sphere.glb",
         null,
         model.ModelTextures.prepare(
-            "./resources/old_car_d.png",
-            "./resources/old_car_mra.png",
+            "./resources/albedo.png",
+            "./resources/metalness.png",
+            "./resources/roughness.png",
             null,
-            null,
-            "./resources/old_car_e.png",
-            "./resources/old_car_n.png",
+            "./resources/emission.png",
+            "./resources/normal.png",
         ),
         shader,
     );
+
+    //BUT NO ISSUES HERE
+    // var car = model.RaylibModel(
+    //     "./resources/models/old_car_new.glb",
+    //     null,
+    //     model.ModelTextures.prepare(
+    //         "./resources/old_car_d.png",
+    //         "./resources/old_car_mra.png",
+    //         null,
+    //         null,
+    //         "./resources/old_car_e.png",
+    //         "./resources/old_car_n.png",
+    //     ),
+    //     shader,
+    // );
 
     var floor = model.RaylibModel(
         "./resources/models/plane.glb",
@@ -137,7 +137,7 @@ pub fn main() !void {
         var emissiveIntensity: f32 = 0.01;
         rl.SetShaderValue(shader, emissiveIntensityLoc, &emissiveIntensity, rl.SHADER_UNIFORM_FLOAT);
 
-        rl.DrawModel(car, rl.Vector3Zero(), 0.25, rl.WHITE);
+        rl.DrawModel(car, rl.Vector3{ .x = 0, .y = 1, .z = 0 }, 0.25, rl.WHITE);
 
         for (0..light.MAX_LIGHTS) |i| {
             const lightColor = rl.Color{ .r = @as(u8, @intFromFloat(lights[i].color[0] * 255)), .g = @as(u8, @intFromFloat(lights[i].color[1] * 255)), .b = @as(u8, @intFromFloat(lights[i].color[2] * 255)), .a = @as(u8, @intFromFloat(lights[i].color[3] * 255)) };
