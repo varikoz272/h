@@ -48,34 +48,34 @@ pub fn main() !void {
     const textureTilingLoc = rl.GetShaderLocation(shader, "tiling");
 
     //ISSUE HERE
-    var car = model.RaylibModel(
-        "./resources/models/sphere.glb",
-        null,
-        model.ModelTextures.prepare(
-            "./resources/albedo.png",
-            "./resources/metalness.png",
-            "./resources/roughness.png",
-            null,
-            "./resources/emission.png",
-            "./resources/normal.png",
-        ),
-        shader,
-    );
-
-    //BUT NO ISSUES HERE
     // var car = model.RaylibModel(
-    //     "./resources/models/old_car_new.glb",
+    //     "./resources/models/sphere.glb",
     //     null,
     //     model.ModelTextures.prepare(
-    //         "./resources/old_car_d.png",
-    //         "./resources/old_car_mra.png",
+    //         "./resources/albedo.png",
+    //         "./resources/metalness.png",
+    //         "./resources/roughness.png",
     //         null,
-    //         null,
-    //         "./resources/old_car_e.png",
-    //         "./resources/old_car_n.png",
+    //         "./resources/emission.png",
+    //         "./resources/normal.png",
     //     ),
     //     shader,
     // );
+
+    //BUT NO ISSUES HERE
+    var car = model.RaylibModel(
+        "./resources/models/old_car_new.glb",
+        null,
+        model.ModelTextures.prepare(
+            "./resources/old_car_d.png",
+            "./resources/old_car_mra.png",
+            null,
+            null,
+            "./resources/old_car_e.png",
+            "./resources/old_car_n.png",
+        ),
+        shader,
+    );
 
     var floor = model.RaylibModel(
         "./resources/models/plane.glb",
@@ -91,7 +91,7 @@ pub fn main() !void {
         shader,
     );
 
-    var carTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
+    var carTextureTiling = rl.Vector2{ .x = 0.25, .y = 0.25 };
     var floorTextureTiling = rl.Vector2{ .x = 0.5, .y = 0.5 };
 
     var lights = [light.MAX_LIGHTS]light.Light{
